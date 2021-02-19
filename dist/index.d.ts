@@ -1,88 +1,56 @@
-declare let networkDrive: any;
 /**
- * @param {string} input - Drive path to search for
- * @returns {void}
- * @description Assertion if the value is a non empty string
+ * @param drivePath - Drive path to search for
+ * @returns An array of drive letters that point to the drive path
+ * @description Finds if a path is already mounted and returns all drive letters that point to that exact path.
+ * @example
+ * networkDrive.find("\\DoesExist\Path")
+ * // returns
+ * ["T"]
+ * @example
+ * networkDrive.find("\\DoesNOTExist\Path")
+ * // returns
+ * []
  */
-declare function assertIfNonEmptyString(input: any): void;
-declare let windowsNetworkDrive: {
-    /**
-     * @function find
-     * @public
-     * @param {string} drivePath - Drive path to search for
-     * @returns {Promise<string[]>} - An array of drive letters that point to the drive path
-     * @description Gets the network drive letter for a path
-     * @example
-     * networkDrive.find("\\DoesExist\Path")
-     * // returns
-     * ["T"]
-     * @example
-     * networkDrive.find("\\DoesNOTExist\Path")
-     * // returns
-     * []
-     */
-    find: (drivePath: any) => Promise<string[]>;
-    /**
-     * @function isWinOs
-     * @public
-     * @returns {boolean} - True if is a Windows OS
-     * @description Test the current OS is Windows. This was split into a function for code testing
-     * @example
-     * if (true ===networkDrive.isWinOs())
-     * {
-     *     console.log("This is running on Windows");
-     * }
-     */
-    isWinOs: () => boolean;
-    /**
-     * @function list
-     * @public
-     * @returns {Promise<Object>} - Object keys are drive letters, values are the network path
-     * @description lists all network drives and paths
-     * @example
-     * networkDrive.list()
-     * // returns
-     * {
-     *    "F":"\\NETWORKA\Files",
-     *    "K":"\\NETWORKB\DRIVE G"
-     * }
-     */
-    list: () => Promise<{}>;
-    /**
-     * @function mount
-     * @public
-     * @param {string} drivePath - Path to create a network drive to
-     * @param {string} [driveLetter] - Drive letter to use when mounting. If undefined a random drive letter will be used.
-     * @param {string} [username] - Username to use when accessing network drive
-     * @param {string} [password] - Password to use when accessing network drive
-     * @returns {Promise<string>} - Drive letter
-     * @description Creates a network drive
-     * @example
-     * networkDrive.mount("\\NETWORKA\Files")
-     * // returns
-     * "F"
-     */
-    mount: (drivePath: any, driveLetter: any, username: any, password: any) => Promise<any>;
-    /**
-     * @function unmount
-     * @public
-     * @param {string} driveLetter - Drive letter to remove
-     * @returns {Promise<void>}
-     * @description Removes a network drive
-     * @example
-     * networkDrive.unmount("F")
-     */
-    unmount: (driveLetter: any) => Promise<any>;
-    /**
-     * @function pathToWindowsPath
-     * @public
-     * @param {string} drivePath - Path to be converted
-     * @returns {Promise<string>} - Converted path
-     * @description Converts a path to a windows path
-     * @example
-     * networkDrive.pathToWindowsPath('K:/test')
-     * // returns
-     * 'K:\test'
-     */
-    pathToWindowsPath: (drivePath: any) => Promise<any>;
-};
+export declare function find(drivePath: string): Promise<string[]>;
+interface ListReturnType {
+    [driveMount: string]: string;
+}
+/**
+ * @returns Object keys are drive letters, values are the network path
+ * @description lists all network drives and their paths
+ * @example
+ * networkDrive.list()
+ * // returns
+ * {
+ *    "F":"\\NETWORKA\Files",
+ *    "K":"\\NETWORKB\DRIVE G"
+ * }
+ */
+export declare function list(): Promise<ListReturnType>;
+interface MountOptions {
+    /** (Windows Only) Drive letter to use when mounting. If undefined a random drive letter will be used. */
+    driveLetter?: string;
+    /** Username to use when accessing network drive */
+    username?: string;
+    /** Password to use when accessing network drive */
+    password?: string;
+}
+/**
+ * @param drivePath - Path to create a network drive to
+ * @param options - options used to create the mount
+ * @returns local mount path (e.g. a drive letter on Windows)
+ * @description Creates a network drive mount and returns the mount path
+ * @example
+ * networkDrive.mount("\\NETWORKA\Files")
+ * // returns
+ * "F"
+ */
+export declare function mount(drivePath: string, options?: MountOptions): Promise<string>;
+/**
+ * @param mountPath - Drive letter or mount path to remove
+ * @description Removes a network mount
+ * @example
+ * networkDrive.unmount("F")
+ */
+export declare function unmount(mountPath: string): Promise<void>;
+export {};
